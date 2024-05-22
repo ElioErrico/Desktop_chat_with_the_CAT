@@ -55,11 +55,15 @@ class ChatApp:
         self.root = root
         self.root.title("Chat")
 
-        self.chat_area = scrolledtext.ScrolledText(root, wrap=tk.WORD, state='disabled')
+        ####
+        self.font = ("Segoe UI", 10)
+        ####
+
+        self.chat_area = scrolledtext.ScrolledText(root, wrap=tk.WORD, state='disabled', font=self.font)  ##### inserito font
         self.chat_area.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
 
         ######
-        self.entry = ttk.Entry(root)
+        self.entry = ttk.Entry(root, font=self.font) ##### inserito font
         ######
         self.entry.pack(padx=10, pady=(0, 10), fill=tk.X)
         self.entry.bind("<Return>", self.send_message)
@@ -73,9 +77,12 @@ class ChatApp:
 
         # Add the clear chat button
         ######
-        self.clear_button = ttk.Button(root, text="Elimina chat", command=self.clear_chat)
+        self.clear_button = ttk.Button(root, text="Elimina chat", command=self.clear_chat, style="TButton")
         ######
         self.clear_button.pack(padx=10, pady=(0, 10))
+
+        self.style = ttk.Style()
+        self.style.configure("TButton", font=self.font)
 
     def send_message(self, event=None):
         user_message = self.entry.get()
