@@ -1,8 +1,8 @@
 import tkinter as tk
 from tkinter import scrolledtext
 #######
-from ttkthemes import ThemedTk
-from tkinter import ttk
+from ttkthemes import ThemedTk ##### aggiunta libreria
+from tkinter import ttk ##### aggiunta libreria
 #######
 import time
 import cheshire_cat_api as ccat
@@ -10,6 +10,7 @@ import json
 from cheshire_cat_api.api_client import ApiClient
 from cheshire_cat_api.configuration import Configuration
 from cheshire_cat_api.api.memory_api import MemoryApi   # Assicurati che il percorso di importazione sia corretto
+import platform
 
 class APIClient:
     def __init__(self, user_id, base_url="localhost", port=1865, auth_key="", secure_connection=False, on_message_callback=None):
@@ -56,7 +57,7 @@ class ChatApp:
         self.root.title("Chat")
 
         ####
-        self.font = ("Segoe UI", 10)
+        self.font = ("Segoe UI", 12) #### Aggiunto Font
         ####
 
         self.chat_area = scrolledtext.ScrolledText(root, wrap=tk.WORD, state='disabled', font=self.font)  ##### inserito font
@@ -77,49 +78,51 @@ class ChatApp:
 
         # Add the clear chat button
         ######
-        self.clear_button = ttk.Button(root, text="Elimina chat", command=self.clear_chat, style="TButton")
+        self.clear_button = ttk.Button(root, text="Elimina chat", command=self.clear_chat, style="TButton") #### aggiunto ttk button
         ######
         self.clear_button.pack(padx=10, pady=(0, 10))
 
-        self.style = ttk.Style()
-        self.style.configure("TButton", font=self.font)
+        self.style = ttk.Style() #### aggiunto ttk button
+        self.style.configure("TButton", font=self.font) #### aggiunto ttk button
 
     def send_message(self, event=None):
         user_message = self.entry.get()
         if user_message:
             self.entry.delete(0, tk.END)
-            self.display_message("You", user_message)
+            self.display_message("You", user_message,"#2f4f4f")  ####### inserito colore
             self.api_client.send_message(user_message)
             self.receiving_tokens=False
     
-    def display_message(self, sender, message):
+    def display_message(self, sender, message, color):
         self.chat_area.configure(state='normal')
-        self.chat_area.insert(tk.END, f"{sender}: {message}\n")
+        self.chat_area.insert(tk.END, f"{sender}: {message}\n",(color)) ########## aggiunto colore
+        self.chat_area.tag_config(color, foreground=color) ########## aggiunto colore
         self.chat_area.configure(state='disabled')
         self.chat_area.see(tk.END)
 
     def update_bot_message(self, content):
         
-        self.chat_area.configure(state='normal') # Abilita la modifica della text area del chat
+        self.chat_area.configure(state='normal') 
         
-        if self.receiving_tokens == True: # Controlla se `receiving_tokens` è False
+        if self.receiving_tokens == True: 
             self.receiving_tokens=not self.receiving_tokens
             print(self.receiving_tokens)
-            self.bot_message = content # Se `receiving_tokens` è False, imposta `bot_message` al nuovo contenuto
-            self.bot_message_id = self.chat_area.index(tk.END + "-1c") # Ottieni l'indice corrente alla fine della text area meno un carattere
-            self.chat_area.insert(tk.END, f"Bot: {self.bot_message}\n") # Inserisci il nuovo messaggio del bot nella text area
+            self.bot_message = content 
+            self.bot_message_id = self.chat_area.index(tk.END + "-1c")
+            self.chat_area.insert(tk.END, f"Bot: {self.bot_message}\n", ("#191970"))  ########## aggiunto colore
         else:
             print(self.receiving_tokens)
-            self.bot_message += content # Se `receiving_tokens` è True, concatena il nuovo contenuto al messaggio esistente
-            self.chat_area.delete(f"{self.bot_message_id} linestart", f"{self.bot_message_id} lineend") # Elimina il messaggio del bot precedente
-            self.chat_area.insert(self.bot_message_id, f"Bot: {self.bot_message}") # Reinserisci il messaggio aggiornato del bot nella stessa posizione
-
-        self.chat_area.configure(state='disabled') # Disabilita la modifica della text area del chat
-        self.chat_area.see(tk.END) # Scorri fino alla fine della text area per mostrare l'ultimo messaggio
+            self.bot_message += content 
+            self.chat_area.delete(f"{self.bot_message_id} linestart", f"{self.bot_message_id} lineend") 
+            self.chat_area.insert(self.bot_message_id, f"Bot: {self.bot_message}", ("#191970"))  ########## aggiunto colore
+        
+        self.chat_area.tag_config("#191970", foreground="#191970")  ########## aggiunto colore
+        self.chat_area.configure(state='disabled') 
+        self.chat_area.see(tk.END)
 
 
     def clear_chat(self):
-        response = self.api_client.wipe_chat_history()  # Cancella la cronologia tramite API
+        response = self.api_client.wipe_chat_history() 
         if response:
             self.chat_area.configure(state='normal')
             self.chat_area.delete(1.0, tk.END)
@@ -144,11 +147,23 @@ class ChatApp:
                 self.receiving_tokens = not self.receiving_tokens
                 print(self.receiving_tokens)
 
+
+########### AGGIUINTA FUNZIONE CHE LEGGE IL PC ##########
+def get_computer_name_platform():
+    try:
+        computer_name = platform.node()
+        return computer_name
+    except Exception as e:
+        return str(e)
+####################################   
+
 if __name__ == "__main__":
     #####
     root = ThemedTk(theme="adapta")  # Imposta il tema qui
     ####
-    api_client = APIClient(user_id="Elio", on_message_callback=lambda message: app.on_message_from_api(message))
+    api_client = APIClient(user_id=get_computer_name_platform(), on_message_callback=lambda message: app.on_message_from_api(message)) ########### INSERITA FUNZIONE CHE LEGGE IL PC
     app = ChatApp(root, api_client)
     root.protocol("WM_DELETE_WINDOW", app.close)
     root.mainloop()
+
+    
