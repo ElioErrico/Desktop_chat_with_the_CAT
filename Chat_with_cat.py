@@ -56,21 +56,18 @@ class ChatApp:
         self.root = root
         self.root.title("Chat")
 
-        ####
         self.font = ("Segoe UI", 12) #### Aggiunto Font
-        ####
 
-        self.chat_area = scrolledtext.ScrolledText(root, wrap=tk.WORD, state='disabled', font=self.font, bg="#f0ffff")  ##### inserito font #### inserito colore sfondo
-        self.chat_area.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
+        self.style = ttk.Style()
+        self.style.configure("Custom.TEntry", font=self.font, background="#f0f0f0")
+
+        # Configura lo sfondo della chat_area qui
+        self.chat_area = scrolledtext.ScrolledText(root, wrap=tk.WORD, state='disabled', font=self.font, bg="#f0f0f0")  ##### inserito font e bg
+        self.chat_area.grid(row=0, column=0, columnspan=2, padx=10, pady=10, sticky="nsew")
 
         # Configura lo stile dell'entry qui
-        self.style = ttk.Style()
-        self.style.configure("Custom.TEntry", font=self.font, background="#f0f8ff", theme="adapta")
-
-        ######
-        self.entry = ttk.Entry(root, style="Custom.TEntry") ##### inserito font
-        ######
-        self.entry.pack(padx=10, pady=(0, 10), fill=tk.X)
+        self.entry = ttk.Entry(root, style="Custom.TEntry")  ##### inserito font e bg tramite stile
+        self.entry.grid(row=1, column=0, padx=10, pady=(0, 10), sticky="ew")
         self.entry.bind("<Return>", self.send_message)
         
         self.api_client = api_client
@@ -81,13 +78,17 @@ class ChatApp:
         self.receiving_tokens = False  # Initialize receiving_tokens
 
         # Add the clear chat button
-        ######
         self.clear_button = ttk.Button(root, text="Elimina chat", command=self.clear_chat, style="TButton") #### aggiunto ttk button
-        ######
-        self.clear_button.pack(padx=10, pady=(0, 10))
+        self.clear_button.grid(row=1, column=1, padx=10, pady=(0, 10))
 
-        self.style = ttk.Style() #### aggiunto ttk button
         self.style.configure("TButton", font=self.font) #### aggiunto ttk button
+
+        # Configura il layout per il ridimensionamento
+        self.root.grid_rowconfigure(0, weight=1)
+        self.root.grid_columnconfigure(0, weight=1)
+        self.root.grid_columnconfigure(1, weight=0)
+
+
 
     def send_message(self, event=None):
         user_message = self.entry.get()
@@ -120,21 +121,25 @@ class ChatApp:
             self.chat_area.delete(f"{self.bot_message_id} linestart", f"{self.bot_message_id} lineend") 
             self.chat_area.insert(self.bot_message_id, f"Bot: {self.bot_message}", ("#191970"))  ########## aggiunto colore
         
-        self.chat_area.tag_config("#191970", foreground="#191970")  ########## aggiunto colore
+        self.chat_area.tag_config("#191970", foreground="#2f4f4f")  ########## aggiunto colore
         self.chat_area.configure(state='disabled') 
         self.chat_area.see(tk.END)
 
 
     def clear_chat(self):
-        response = self.api_client.wipe_chat_history() 
-        if response:
-            self.chat_area.configure(state='normal')
-            self.chat_area.delete(1.0, tk.END)
-            self.chat_area.configure(state='disabled')
-            self.bot_message = ""
-            self.bot_message_id = None
-        else:
-            print("Failed to wipe chat history.")
+        try:
+            response = self.api_client.wipe_chat_history()
+            if response:
+                self.chat_area.configure(state='normal')
+                self.chat_area.delete(1.0, tk.END)
+                self.chat_area.configure(state='disabled')
+                self.bot_message = ""
+                self.bot_message_id = None
+            else:
+                print("Failed to wipe chat history.")
+        except Exception as e:
+            print(f"An error occurred while trying to clear the chat: {e}")
+
 
     def close(self):
         self.api_client.close_connection()
@@ -169,4 +174,3 @@ if __name__ == "__main__":
     app = ChatApp(root, api_client)
     root.protocol("WM_DELETE_WINDOW", app.close)
     root.mainloop()
-
