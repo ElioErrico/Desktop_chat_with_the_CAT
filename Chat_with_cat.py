@@ -60,11 +60,15 @@ class ChatApp:
         self.font = ("Segoe UI", 12) #### Aggiunto Font
         ####
 
-        self.chat_area = scrolledtext.ScrolledText(root, wrap=tk.WORD, state='disabled', font=self.font)  ##### inserito font
+        self.chat_area = scrolledtext.ScrolledText(root, wrap=tk.WORD, state='disabled', font=self.font, bg="#f0ffff")  ##### inserito font #### inserito colore sfondo
         self.chat_area.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
 
+        # Configura lo stile dell'entry qui
+        self.style = ttk.Style()
+        self.style.configure("Custom.TEntry", font=self.font, background="#f0f8ff", theme="adapta")
+
         ######
-        self.entry = ttk.Entry(root, font=self.font) ##### inserito font
+        self.entry = ttk.Entry(root, style="Custom.TEntry") ##### inserito font
         ######
         self.entry.pack(padx=10, pady=(0, 10), fill=tk.X)
         self.entry.bind("<Return>", self.send_message)
@@ -166,4 +170,3 @@ if __name__ == "__main__":
     root.protocol("WM_DELETE_WINDOW", app.close)
     root.mainloop()
 
-    
