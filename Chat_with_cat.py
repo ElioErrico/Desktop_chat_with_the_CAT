@@ -1,11 +1,15 @@
 import tkinter as tk
 from tkinter import scrolledtext
+#######
+from ttkthemes import ThemedTk
+from tkinter import ttk
+#######
 import time
 import cheshire_cat_api as ccat
 import json
 from cheshire_cat_api.api_client import ApiClient
 from cheshire_cat_api.configuration import Configuration
-from cheshire_cat_api.api.memory_api import MemoryApi  # Assicurati che il percorso di importazione sia corretto
+from cheshire_cat_api.api.memory_api import MemoryApi   # Assicurati che il percorso di importazione sia corretto
 
 class APIClient:
     def __init__(self, user_id, base_url="localhost", port=1865, auth_key="", secure_connection=False, on_message_callback=None):
@@ -54,7 +58,9 @@ class ChatApp:
         self.chat_area = scrolledtext.ScrolledText(root, wrap=tk.WORD, state='disabled')
         self.chat_area.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
 
-        self.entry = tk.Entry(root)
+        ######
+        self.entry = ttk.Entry(root)
+        ######
         self.entry.pack(padx=10, pady=(0, 10), fill=tk.X)
         self.entry.bind("<Return>", self.send_message)
         
@@ -66,7 +72,9 @@ class ChatApp:
         self.receiving_tokens = False  # Initialize receiving_tokens
 
         # Add the clear chat button
-        self.clear_button = tk.Button(root, text="Elimina chat", command=self.clear_chat)
+        ######
+        self.clear_button = ttk.Button(root, text="Elimina chat", command=self.clear_chat)
+        ######
         self.clear_button.pack(padx=10, pady=(0, 10))
 
     def send_message(self, event=None):
@@ -130,7 +138,9 @@ class ChatApp:
                 print(self.receiving_tokens)
 
 if __name__ == "__main__":
-    root = tk.Tk()
+    #####
+    root = ThemedTk(theme="adapta")  # Imposta il tema qui
+    ####
     api_client = APIClient(user_id="Elio", on_message_callback=lambda message: app.on_message_from_api(message))
     app = ChatApp(root, api_client)
     root.protocol("WM_DELETE_WINDOW", app.close)
