@@ -60,13 +60,13 @@ class ChatApp:
         # Caricare l'immagine
         self.image = tk.PhotoImage(file="logo.png")
         self.image_label = tk.Label(root, image=self.image)
-        self.image_label.pack(side=tk.TOP, anchor='n', pady=10)
+        self.image_label.grid(row=0, column=0, columnspan=2, pady=10, sticky='n')
 
         self.chat_area = scrolledtext.ScrolledText(root, wrap=tk.WORD, state='disabled', font=self.font, bg="#f0f0f0")
-        self.chat_area.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
+        self.chat_area.grid(row=1, column=0, columnspan=2, padx=10, pady=10, sticky='nsew')
 
         self.entry = tk.Entry(root)
-        self.entry.pack(padx=10, pady=(0, 10), fill=tk.X)
+        self.entry.grid(row=2, column=0, padx=10, pady=(0, 10), sticky='ew')
         self.entry.bind("<Return>", self.send_message)
 
         self.api_client = api_client
@@ -77,22 +77,26 @@ class ChatApp:
         self.receiving_tokens = False  # Initialize receiving_tokens
 
         self.clear_button = tk.Button(root, text="Elimina chat", command=self.clear_chat)
-        self.clear_button.pack(side=tk.LEFT, padx=10, pady=(0, 10))
+        self.clear_button.grid(row=2, column=1, padx=10, pady=(0, 10), sticky='ew')
+
+        # Configurazione della grid
+        self.root.grid_rowconfigure(1, weight=1)  # Consente al chat_area di espandersi
+        self.root.grid_columnconfigure(0, weight=1)  # Consente all'entry di espandersi
 
     def send_message(self, event=None):
         user_message = self.entry.get()
         if user_message:
             self.entry.delete(0, tk.END)
-            self.display_message("You", user_message,"#2f4f4f")
+            self.display_message("You", user_message, "#2f4f4f")
             self.api_client.send_message(user_message)
-            self.receiving_tokens=False
+            self.receiving_tokens = False
 
-    
-    def display_message(self, sender, message,color):
+    def display_message(self, sender, message, color):
         self.chat_area.configure(state='normal')
-        self.chat_area.insert(tk.END, f"{sender}: \n{message}\n\n",(color))
+        self.chat_area.insert(tk.END, f"{sender}: \n{message}\n\n", (color))
         self.chat_area.configure(state='disabled')
         self.chat_area.see(tk.END)
+
 
 
     def update_bot_message(self, content):
@@ -155,10 +159,8 @@ def get_computer_name_platform():
         return str(e)
     
 if __name__ == "__main__":
-    #####
-    root = tk.Tk()  # Imposta il tema qui
-    ####
-    api_client = APIClient(user_id=get_computer_name_platform(), on_message_callback=lambda message: app.on_message_from_api(message)) ########### INSERITA FUNZIONE CHE LEGGE IL PC
+    root = tk.Tk()
+    api_client = APIClient(user_id=get_computer_name_platform(), on_message_callback=lambda message: app.on_message_from_api(message)) 
     app = ChatApp(root, api_client)
     root.protocol("WM_DELETE_WINDOW", app.close)
     root.mainloop()
