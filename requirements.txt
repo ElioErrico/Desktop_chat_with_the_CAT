@@ -1,1 +1,2 @@
 cheshire_cat_api == 1.4.1
+tkinter
