@@ -5,13 +5,11 @@ This program creates a desktop chat application to communicate with the Cheshire
 
 ## Features
 
-Desktop Interface: A chat GUI built with Tkinter.
-Cheshire Cat API: Interacts with the Cheshire Cat API to send and receive messages.
-Automatic User ID: The user is automatically created using the computer's name.
-Message Display Mode: Choose between token-by-token message streaming or direct final output.
-Configuration
-Dependencies
-Ensure you have the following dependencies installed:
+0) Set the Host, Default is local host
+1) Desktop Interface: A chat GUI built with Tkinter.
+2) Cheshire Cat API: Interacts with the Cheshire Cat API to send and receive messages.
+3) Automatic User ID: The user is automatically created using the computer's name.
+4) Message Display Mode: Choose between token-by-token message streaming or direct final output.
 
 ## Setting Message Display Mode
 
