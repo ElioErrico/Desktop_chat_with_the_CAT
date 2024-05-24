@@ -23,3 +23,6 @@ To create an executable (.exe) file, use pyinstaller:
 Install pyinstaller
 Generate the .exe  with pyinstaller --onefile main.py
 The executable will be located in the dist folder within your project directory.
+
+
+![image](https://github.com/ElioErrico/Desktop_chat_with_the_CAT/assets/143315119/c5cff691-4548-4eee-83ba-748cc184cfc7)
